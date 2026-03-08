@@ -1,1 +1,25 @@
 hallow world
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spacefy Link</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+
+  <h1>SPACEFY Access</h1>
+    <a href="https://google.com" id="spaceLink" class="btn">OPEN the LINK</a>
+    <script>
+    document.getElementById('spaceLink').addEventListener('click', function(e) { const hour = new Date().getHours();
+            // 11 is 11 AM, 18 is 6 PM
+            const isOpen = (hour >= 11 && hour < 18); if (!isOpen) {
+                e.preventDefault();
+    alert("Access Denied! This site only works between 11 AM and 6 PM."); }
+        });
+    </script>
+
+</body>
+</html>
