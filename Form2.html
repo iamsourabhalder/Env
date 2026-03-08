@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure GitHub Contact Form</title>
+    <style>
+        /* Custom Internal Styles to replace Tailwind */
+        :root {
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --border: #e2e8f0;
+            --error-bg: #fef2f2;
+            --error-text: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .card {
+            max-width: 448px;
+            width: 100%;
+            background: var(--white);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background-color: var(--primary);
+            padding: 2rem;
+            text-align: center;
+            color: var(--white);
+        }
+
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+        }
+
+        textarea {
+            resize: none;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            background-color: #a5b4fc;
+            cursor: not-allowed;
+        }
+
+        .error-alert {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .success-state {
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .success-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer {
+            background-color: #f1f5f9;
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer p {
+            margin: 0;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: monospace;
+        }
+
+        .loader {
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <!-- Header -->
+        <div class="header">
+            <h1>Get in Touch</h1>
+            <p>Your message will be stored securely in our GitHub DB.</p>
+        </div>
+
+        <!-- Form Container -->
+        <div id="form-body" class="form-container">
+            <form id="contact-form">
+                <!-- Name Input -->
+                <div class="form-group">
+                    <label class="label">👤 Name</label>
+                    <input required type="text" id="name" placeholder="John Doe">
+                </div>
+
+                <!-- Email Input -->
+                <div class="form-group">
+                    <label class="label">✉️ Email Address</label>
+                    <input required type="email" id="email" placeholder="john@example.com">
+                </div>
+
+                <!-- Message Input -->
+                <div class="form-group">
+                    <label class="label">💬 Message</label>
+                    <textarea required id="message" rows="4" placeholder="Tell us something..."></textarea>
+                </div>
+
+                <!-- Error Alert -->
+                <div id="error-msg" class="error-alert hidden">
+                    <span>⚠️ Something went wrong. Please try again.</span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" id="submit-btn" class="submit-btn">
+                    <span id="btn-text">Send Message</span>
+                    <div id="btn-loader" class="loader hidden"></div>
+                </button>
+            </form>
+        </div>
+
+        <!-- Success Message -->
+        <div id="success-state" class="success-state hidden">
+            <div class="success-icon">✅</div>
+            <h2 style="margin: 0 0 0.5rem 0; font-size: 1.25rem;">Message Received!</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Your data has been successfully pushed to the repository.</p>
+            <button onclick="resetForm()" class="submit-btn" style="width: auto; padding: 0.5rem 1.5rem; margin: 0 auto;">
+                Send Another
+            </button>
+        </div>
+
+        <!-- Footer Info -->
+        <div class="footer">
+            <p>Powered by GitHub REST API & Serverless</p>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('contact-form');
+        const formBody = document.getElementById('form-body');
+        const successState = document.getElementById('success-state');
+        const submitBtn = document.getElementById('submit-btn');
+        const btnText = document.getElementById('btn-text');
+        const btnLoader = document.getElementById('btn-loader');
+        const errorMsg = document.getElementById('error-msg');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            setLoading(true);
+            errorMsg.classList.add('hidden');
+
+            const payload = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                message: document.getElementById('message').value
+            };
+
+            try {
+                const response = await fetch('/api/submit-to-github', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error('Failed to submit');
+
+                formBody.classList.add('hidden');
+                successState.classList.remove('hidden');
+            } catch (err) {
+                console.error(err);
+                errorMsg.classList.remove('hidden');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        function setLoading(isLoading) {
+            submitBtn.disabled = isLoading;
+            if (isLoading) {
+                btnText.textContent = 'Processing...';
+                btnLoader.classList.remove('hidden');
+            } else {
+                btnText.textContent = 'Send Message';
+                btnLoader.classList.add('hidden');
+            }
+        }
+
+        function resetForm() {
+            form.reset();
+            successState.classList.add('hidden');
+            formBody.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
+
